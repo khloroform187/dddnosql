@@ -28,6 +28,10 @@ namespace Striker.RelayRace.SqlNh
 
             this._dbContext.Races.Add(entityRace);
             this._dbContext.SaveChanges();
+
+            TODO MAP LIST OF STUFF INSIDE RACE: http://www.entityframeworktutorial.net/code-first/configure-one-to-many-relationship-in-code-first.aspx
+
+                DBNull CREATE LOCALLY
         }
 
         public void BulkCreate(List<Domain.Race> races)
