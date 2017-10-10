@@ -19,6 +19,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Striker.RelayRace.Daemon", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Striker.RelayRace.SqlNh", "Striker.RelayRace.SqlNh\Striker.RelayRace.SqlNh.csproj", "{C11CFE96-87BF-49F9-8E27-F43860D8FAD2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentation", "{381A0D55-9AA2-4DFE-ABF3-C6B9DF57A536}"
+	ProjectSection(SolutionItems) = preProject
+		readme.txt = readme.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
