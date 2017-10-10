@@ -26,8 +26,13 @@ namespace Striker.RelayRace.SqlNh
         {
             var entityActiveTeams = activeTeams.Select(Convert);
 
-            this._dbContext.ActiveTeams.AddRange(entityActiveTeams);
-            this._dbContext.SaveChanges();
+            foreach (var entityActiveTeam in entityActiveTeams)
+            {
+                this._dbContext.Database.ExecuteSqlCommand($"INSERT INTO ActiveTeams VALUES ('{entityActiveTeam.TeamId}','{entityActiveTeam.ChipId}')");
+            }
+
+            //this._dbContext.ActiveTeams.AddRange(entityActiveTeams);
+            //this._dbContext.SaveChanges();
         }
 
         public Domain.ActiveTeam Find(string chipId)

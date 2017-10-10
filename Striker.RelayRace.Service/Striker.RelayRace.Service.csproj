@@ -56,6 +56,10 @@
       <Project>{a1d00f6d-83c2-4977-bf05-0d01588e79f3}</Project>
       <Name>Striker.RelayRace.RabbitMQ</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Striker.RelayRace\Striker.RelayRace.csproj">
+      <Project>{EFDC9319-C21E-4E28-8EC0-91E940DC499E}</Project>
+      <Name>Striker.RelayRace</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Striket.RelayRace.Domain\Striker.RelayRace.Domain.csproj">
       <Project>{F91A69AF-8F64-478B-81A3-2C239EAD1390}</Project>
       <Name>Striker.RelayRace.Domain</Name>

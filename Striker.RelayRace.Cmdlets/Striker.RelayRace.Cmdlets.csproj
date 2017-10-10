@@ -87,8 +87,9 @@
     <Compile Include="IoC\CmdletRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenameRace.cs" />
+    <Compile Include="SeedData.cs" />
     <Compile Include="StartRace.cs" />
-    <Compile Include="RestartTest.cs" />
+    <Compile Include="BenchGetRaceStatistics.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -109,6 +110,10 @@
     <ProjectReference Include="..\Striker.RelayRace.SqlNh\Striker.RelayRace.SqlNh.csproj">
       <Project>{C11CFE96-87BF-49F9-8E27-F43860D8FAD2}</Project>
       <Name>Striker.RelayRace.SqlNh</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Striker.RelayRace\Striker.RelayRace.csproj">
+      <Project>{EFDC9319-C21E-4E28-8EC0-91E940DC499E}</Project>
+      <Name>Striker.RelayRace</Name>
     </ProjectReference>
     <ProjectReference Include="..\Striket.RelayRace.Domain\Striker.RelayRace.Domain.csproj">
       <Project>{F91A69AF-8F64-478B-81A3-2C239EAD1390}</Project>

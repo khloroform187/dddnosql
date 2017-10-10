@@ -36,8 +36,13 @@ namespace Striker.RelayRace.SqlNh
         {
             var entityRaces = races.Select(Convert);
 
-            this._dbContext.Races.AddRange(entityRaces);
-            this._dbContext.SaveChanges();
+            foreach (var entityRace in entityRaces)
+            {
+                this._dbContext.Database.ExecuteSqlCommand($"INSERT INTO Races VALUES ('{entityRace.RaceId}','{entityRace.Name}','{entityRace.LapDistanceInMeters}','{entityRace.Start}','{entityRace.End}','{entityRace.ChipIds}','{entityRace.TeamIds}')");
+            }
+
+            //this._dbContext.Races.AddRange(entityRaces);
+            //this._dbContext.SaveChanges();
         }
 
         public void Update(Domain.Race race)

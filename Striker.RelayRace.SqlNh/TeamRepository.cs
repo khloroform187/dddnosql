@@ -31,8 +31,20 @@ namespace Striker.RelayRace.SqlNh
         {
             var entityTeams = teams.Select(Convert);
 
-            this._dbContext.Teams.AddRange(entityTeams);
-            this._dbContext.SaveChanges();
+            foreach (var entityTeam in entityTeams)
+            {
+                this._dbContext.Database.ExecuteSqlCommand($"INSERT INTO Teams VALUES ('{entityTeam.TeamId}','{entityTeam.Name}','{entityTeam.RaceId}','{entityTeam.ChipId}')");
+
+
+                foreach (var lap in entityTeam.Laps)
+                {
+                    this._dbContext.Database.ExecuteSqlCommand($"INSERT INTO Laps VALUES ('{lap.LapId}','{lap.Start}','{lap.End}','{entityTeam.TeamId}')");
+                }
+                //this._dbContext.Teams.Add(entityTeam);
+                //this._dbContext.SaveChanges();
+            }
+
+            
         }
 
         public void Update(Domain.Team team)
@@ -46,6 +58,7 @@ namespace Striker.RelayRace.SqlNh
 
         public void Cleanup()
         {
+            this._dbContext.Database.ExecuteSqlCommand("TRUNCATE TABLE [Laps]");
             this._dbContext.Database.ExecuteSqlCommand("TRUNCATE TABLE [Teams]");
         }
 

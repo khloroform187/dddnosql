@@ -4,11 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Management.Automation;
 using System.Threading;
+using MongoDB.Driver;
 using Newtonsoft.Json;
 using Striker.RelayRace.Cmdlets.IoC;
 using Striker.RelayRace.Domain.Repositories;
 using Striker.RelayRace.MongoDB;
 using Striker.RelayRace.Service;
+using Striker.RelayRace.SqlNh;
 using StructureMap;
 using ActiveTeam = Striker.RelayRace.Domain.ActiveTeam;
 using LapStatistic = Striker.RelayRace.Domain.LapStatistic;
@@ -17,8 +19,8 @@ using Team = Striker.RelayRace.Domain.Team;
 
 namespace Striker.RelayRace.Cmdlets
 {
-    [Cmdlet("Restart", "Test")]
-    public class RestartTest : PSCmdlet
+    [Cmdlet("Seed", "Data")]
+    public class SeedData : PSCmdlet
     {
         [Parameter(Position = 1, Mandatory = true)]
         public int RaceQuantity { get; set; }
@@ -32,9 +34,13 @@ namespace Striker.RelayRace.Cmdlets
         [Parameter(Position = 4, Mandatory = true)]
         public bool UseMongo { get; set; }
 
+        [Parameter(Position = 5, Mandatory = true)]
+        public bool CleanupDB { get; set; }
+
         protected override void ProcessRecord()
         {
             const string DatabaseaName = "relayrace";
+            StatsPrinter.IsMongoDb = this.UseMongo;
 
             var container = new Container(x =>
                 x.IncludeRegistry(
@@ -45,18 +51,17 @@ namespace Striker.RelayRace.Cmdlets
                         this.UseMongo)));
 
             var raceRepository = container.GetInstance<IRaceRepository>();
-            raceRepository.Cleanup();
-
             var activeTeamRepository = container.GetInstance<IActiveTeamRepository>();
-            activeTeamRepository.Cleanup();
-
             var teamRepository = container.GetInstance<ITeamRepository>();
-            teamRepository.Cleanup();
-
             var lapStatisticRepository = container.GetInstance<ILapStatisticRepository>();
-            lapStatisticRepository.Cleanup();
 
-            var statisticsManager = container.GetInstance<StatisticManager>();
+            if (this.CleanupDB)
+            {
+                raceRepository.Cleanup();
+                activeTeamRepository.Cleanup();
+                teamRepository.Cleanup();
+                lapStatisticRepository.Cleanup();
+            }
 
             var random = new Random();
 
@@ -65,7 +70,7 @@ namespace Striker.RelayRace.Cmdlets
             var activeTeams = new List<ActiveTeam>();
             var lapStatistics = new List<LapStatistic>();
 
-            Console.WriteLine("Begin generating data in memory");
+            this.WriteVerbose("Begin generating data in memory");
             for (var i = 0; i < this.RaceQuantity; i++)
             {
                 var chipIds = new List<string>();
@@ -84,7 +89,7 @@ namespace Striker.RelayRace.Cmdlets
                     raceTeams.Add(team);
                     race.RegisterTeam(team.Id);
                 }
-                
+
                 races.Add(race);
                 race.StartRace(DateTime.UtcNow);
 
@@ -117,28 +122,30 @@ namespace Striker.RelayRace.Cmdlets
                 }
             }
 
-            Console.WriteLine("End generating data in memory");
+            this.WriteVerbose("End generating data in memory");
 
-            Console.WriteLine("Begin race persistence");
+            this.WriteVerbose("Begin race persistence");
             raceRepository.BulkCreate(races);
-            Console.WriteLine("End race persistence");
-            Console.WriteLine("Begin team persistence");
+            this.WriteVerbose("End race persistence");
+            this.WriteVerbose("Begin team persistence");
             teamRepository.BulkCreate(teams);
-            Console.WriteLine("End team persistence");
-            Console.WriteLine("Begin activeTeam persistence");
+            this.WriteVerbose("End team persistence");
+            this.WriteVerbose("Begin activeTeam persistence");
             activeTeamRepository.BulkAdd(activeTeams);
-            Console.WriteLine("End activeTeam persistence");
-            Console.WriteLine("Begin lapStatistic persistence");
+            this.WriteVerbose("End activeTeam persistence");
+            this.WriteVerbose("Begin lapStatistic persistence");
             lapStatisticRepository.BulkAddLapStatistic(lapStatistics);
-            Console.WriteLine("End lapStatistic persistence");
+            this.WriteVerbose("End lapStatistic persistence");
 
-            var raceId = races.First().Id;
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-            statisticsManager.GetRaceStatistics(raceId);
-            stopWatch.Stop();
-            Console.WriteLine($"statisticsManager.GetRaceStatistics(raceId) --> {stopWatch.ElapsedMilliseconds}");
+            Console.WriteLine($"Random Race Id: '{races.Last().Id}'");
 
+            container.Dispose();
+            container.EjectAllInstancesOf<IMongoClient>();
+            container.EjectAllInstancesOf<IRaceRepository>();
+            container.EjectAllInstancesOf<ITeamRepository>();
+            container.EjectAllInstancesOf<IActiveTeamRepository>();
+            container.EjectAllInstancesOf<ILapStatisticRepository>();
+            container.EjectAllInstancesOf<RelayRaceDbContext>();
         }
     }
 }

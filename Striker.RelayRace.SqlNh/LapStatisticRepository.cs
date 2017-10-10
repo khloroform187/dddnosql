@@ -26,8 +26,13 @@ namespace Striker.RelayRace.SqlNh
         {
             var entityLapStatistics = lapStatistics.Select(Convert);
 
-            this._dbContext.LapStatistics.AddRange(entityLapStatistics);
-            this._dbContext.SaveChanges();
+            foreach (var entityLapStatistic in entityLapStatistics)
+            {
+                this._dbContext.Database.ExecuteSqlCommand($"INSERT INTO LapStatistics VALUES ('{entityLapStatistic.Id}','{entityLapStatistic.TeamName}','{entityLapStatistic.RaceId}','{entityLapStatistic.TeamId}','{entityLapStatistic.DistanceInMeters}','{entityLapStatistic.Pace}','{entityLapStatistic.Length}','{entityLapStatistic.CompletedOn}')");
+            }
+
+            //this._dbContext.LapStatistics.AddRange(entityLapStatistics);
+            //this._dbContext.SaveChanges();
         }
 
         public List<Domain.LapStatistic> Find(Guid raceId)

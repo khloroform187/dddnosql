@@ -28,13 +28,13 @@ namespace Striker.RelayRace.Service
             stopWatch.Start();
             var race = this._raceRepository.Get(raceId);
             stopWatch.Stop();
-            Console.WriteLine($"this._raceRepository.Get(raceId) --> {stopWatch.ElapsedMilliseconds}");
-
+            StatsPrinter.Print("GetRace", stopWatch.ElapsedMilliseconds);
+            
             stopWatch.Reset();
             stopWatch.Start();
             var lapStatistics = this._lapStatisticRepository.Find(raceId);
             stopWatch.Stop();
-            Console.WriteLine($"this._lapStatisticRepository.Find(raceId) --> {stopWatch.ElapsedMilliseconds}");
+            StatsPrinter.Print("FindLapStatistic", stopWatch.ElapsedMilliseconds);
 
             var teamsLapStatistics = lapStatistics.GroupBy(x => x.TeamId);
 
