@@ -1,17 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Striker.RelayRace.SqlNh
 {
+    [Table("Teams")]
     public class Team
     {
-        public string TeamId { get; set; }
+        [Key]
+        public Guid TeamId { get; set; }
 
         public string Name { get; set; }
 
-        public string RaceId { get; set; }
+        public Guid RaceId { get; set; }
 
         public string ChipId { get; set; }
 
-        public List<Lap> Laps { get; set; }
+        public ICollection<Lap> Laps { get; set; }
     }
 }

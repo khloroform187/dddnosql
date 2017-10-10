@@ -20,13 +20,20 @@ namespace Striker.RelayRace.Cmdlets
         [Parameter(Position = 1, Mandatory = true)]
         public string Name { get; set; }
 
+        [Parameter(Position = 2, Mandatory = true)]
+        public bool UseMongo { get; set; }
+
         protected override void ProcessRecord()
         {
-            const string ConnectionString = Connection.ConnectionString;
             const string DatabaseaName = "relayrace";
 
             var container = new Container(x =>
-                x.IncludeRegistry(new CmdletRegistry(ConnectionString, DatabaseaName)));
+                x.IncludeRegistry(
+                    new CmdletRegistry(
+                        Connection.MongoDbConnectionString,
+                        Connection.SqlConnectionString,
+                        DatabaseaName,
+                        this.UseMongo)));
 
             var raceRepository = container.GetInstance<IRaceRepository>();
 

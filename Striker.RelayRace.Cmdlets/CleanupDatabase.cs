@@ -9,13 +9,20 @@ namespace Striker.RelayRace.Cmdlets
     [Cmdlet("Cleanup", "Database")]
     public class CleanupDatabase : PSCmdlet
     {
+        [Parameter(Position = 0, Mandatory = true)]
+        public bool UseMongo { get; set; }
+
         protected override void ProcessRecord()
         {
-            const string ConnectionString = Connection.ConnectionString;
             const string DatabaseaName = "relayrace";
 
             var container = new Container(x =>
-                x.IncludeRegistry(new CmdletRegistry(ConnectionString, DatabaseaName)));
+                x.IncludeRegistry(
+                    new CmdletRegistry(
+                        Connection.MongoDbConnectionString,
+                        Connection.SqlConnectionString,
+                        DatabaseaName,
+                        this.UseMongo)));
 
             var raceRepository = container.GetInstance<IRaceRepository>();
             raceRepository.Cleanup();

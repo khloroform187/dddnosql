@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Striker.RelayRace.Cmdlets.IoC;
 using Striker.RelayRace.Domain.DomainEvents;
 using Striker.RelayRace.MongoDB;
@@ -17,11 +14,16 @@ namespace Striker.RelayRace.Daemon
     {
         static void Main(string[] args)
         {
-            const string ConnectionString = Connection.ConnectionString;
+            const bool UseMongo = false;
             const string DatabaseaName = "relayrace";
 
             var container = new Container(x =>
-                x.IncludeRegistry(new CmdletRegistry(ConnectionString, DatabaseaName)));
+                x.IncludeRegistry(
+                    new CmdletRegistry(
+                        Connection.MongoDbConnectionString,
+                        Connection.SqlConnectionString,
+                        DatabaseaName,
+                        UseMongo)));
 
             var eventDispatcher = container.GetInstance<EventDispatcher>();
 

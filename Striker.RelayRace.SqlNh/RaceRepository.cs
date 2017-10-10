@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Striker.RelayRace.Domain;
 using Striker.RelayRace.Domain.Repositories;
 
 namespace Striker.RelayRace.SqlNh
@@ -19,7 +17,11 @@ namespace Striker.RelayRace.SqlNh
 
         public Domain.Race Get(Guid id)
         {
-            throw new NotImplementedException();
+            var entityRace = this._dbContext.Races.Single(x => x.RaceId == id);
+
+            var result = Convert(entityRace);
+
+            return result;
         }
 
         public void Create(Domain.Race race)
@@ -28,39 +30,77 @@ namespace Striker.RelayRace.SqlNh
 
             this._dbContext.Races.Add(entityRace);
             this._dbContext.SaveChanges();
-
-            TODO MAP LIST OF STUFF INSIDE RACE: http://www.entityframeworktutorial.net/code-first/configure-one-to-many-relationship-in-code-first.aspx
-
-                DBNull CREATE LOCALLY
         }
 
         public void BulkCreate(List<Domain.Race> races)
         {
-            throw new NotImplementedException();
+            var entityRaces = races.Select(Convert);
+
+            this._dbContext.Races.AddRange(entityRaces);
+            this._dbContext.SaveChanges();
         }
 
         public void Update(Domain.Race race)
         {
-            throw new NotImplementedException();
+            var existing = this._dbContext.Races.Single(x => x.RaceId == race.Id);
+
+            Update(existing, race);
+
+            this._dbContext.SaveChanges();
         }
 
         public void Cleanup()
         {
-            throw new NotImplementedException();
+            this._dbContext.Database.ExecuteSqlCommand("TRUNCATE TABLE [Races]");
         }
 
         private static Race Convert(Domain.Race race)
         {
             var result = new Race
             {
-                RaceId = race.Id.ToString(),
-                ChipIds = race.ChipIds,
+                RaceId = race.Id,
+                ChipIds = string.Join(";", race.ChipIds),
                 End = race.End,
                 LapDistanceInMeters = race.LapDistanceInMeters,
                 Name = race.Name,
                 Start = race.Start,
-                TeamIds = race.TeamIds.ToList()
+                TeamIds = string.Join(";", race.TeamIds)
             };
+
+            return result;
+        }
+
+        private static Race Update(Race existingRace, Domain.Race race)
+        {
+            existingRace.ChipIds = string.Join(";", race.ChipIds);
+            existingRace.End = race.End;
+            existingRace.Start = race.Start;
+            existingRace.LapDistanceInMeters = race.LapDistanceInMeters;
+            existingRace.Name = race.Name;
+            existingRace.TeamIds = string.Join(";", race.TeamIds);
+
+            return existingRace;
+        }
+
+        private static Domain.Race Convert(Race race)
+        {
+            var result = new Domain.Race(race.Name, race.LapDistanceInMeters, race.ChipIds.Split(';').ToList());
+
+
+            if (!string.IsNullOrWhiteSpace(race.TeamIds))
+            {
+                var split = race.TeamIds.Split(';');
+
+                if (split.Any())
+                {
+                    var blop = split.Select(x => new Guid(x)).ToList();
+                    result.SetPropertyValue("TeamIds", new ReadOnlyCollection<Guid>(blop));
+                }
+            }
+
+            result.SetPropertyValue("End", race.End);
+            result.SetPropertyValue("Start", race.Start);
+            result.SetPropertyValue("Id", race.RaceId);
 
             return result;
         }

@@ -1,43 +1,82 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Striker.RelayRace.Domain;
 using Striker.RelayRace.Domain.Repositories;
 
 namespace Striker.RelayRace.SqlNh
 {
     public class ActiveTeamRepository : IActiveTeamRepository
     {
-        public void Add(ActiveTeam activeTeam)
+        private readonly RelayRaceDbContext _dbContext;
+
+        public ActiveTeamRepository(RelayRaceDbContext dbContext)
         {
-            throw new NotImplementedException();
+            this._dbContext = dbContext;
         }
 
-        public void BulkAdd(List<ActiveTeam> activeTeams)
+        public void Add(Domain.ActiveTeam activeTeam)
         {
-            throw new NotImplementedException();
+            var entityActiveTeam = Convert(activeTeam);
+
+            this._dbContext.ActiveTeams.Add(entityActiveTeam);
+            this._dbContext.SaveChanges();
         }
 
-        public ActiveTeam Find(string chipId)
+        public void BulkAdd(List<Domain.ActiveTeam> activeTeams)
         {
-            throw new NotImplementedException();
+            var entityActiveTeams = activeTeams.Select(Convert);
+
+            this._dbContext.ActiveTeams.AddRange(entityActiveTeams);
+            this._dbContext.SaveChanges();
         }
 
-        public ActiveTeam Find(Guid teamId)
+        public Domain.ActiveTeam Find(string chipId)
         {
-            throw new NotImplementedException();
+            var entityActiveTeam = this._dbContext.ActiveTeams.Single(x => x.ChipId == chipId);
+
+            var result = Convert(entityActiveTeam);
+
+            return result;
         }
 
-        public void Remove(ActiveTeam activeTeam)
+        public Domain.ActiveTeam Find(Guid teamId)
         {
-            throw new NotImplementedException();
+            var entityActiveTeam = this._dbContext.ActiveTeams.Single(x => x.TeamId == teamId);
+
+            var result = Convert(entityActiveTeam);
+
+            return result;
+        }
+
+        public void Remove(Domain.ActiveTeam activeTeam)
+        {
+            var entityActiveTeam = this._dbContext.ActiveTeams.Single(x => x.TeamId == activeTeam.TeamId);
+
+            this._dbContext.ActiveTeams.Remove(entityActiveTeam);
+            this._dbContext.SaveChanges();
         }
 
         public void Cleanup()
         {
-            throw new NotImplementedException();
+            this._dbContext.Database.ExecuteSqlCommand("TRUNCATE TABLE [ActiveTeams]");
+        }
+
+        private static ActiveTeam Convert(Domain.ActiveTeam activeTeam)
+        {
+            return new ActiveTeam
+            {
+                ChipId = activeTeam.ChipId,
+                TeamId = activeTeam.TeamId
+            };
+        }
+
+        private static Domain.ActiveTeam Convert(ActiveTeam activeTeam)
+        {
+            return new Domain.ActiveTeam
+            {
+                ChipId = activeTeam.ChipId,
+                TeamId = activeTeam.TeamId
+            };
         }
     }
 }

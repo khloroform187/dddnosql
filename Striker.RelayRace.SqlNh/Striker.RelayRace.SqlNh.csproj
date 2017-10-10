@@ -53,11 +53,14 @@
     <Compile Include="ActiveTeamRepository.cs" />
     <Compile Include="Lap.cs" />
     <Compile Include="LapStatistic.cs" />
+    <Compile Include="LapStatisticRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Race.cs" />
     <Compile Include="RaceRepository.cs" />
+    <Compile Include="ReflexionExtension.cs" />
     <Compile Include="RelayRaceContext.cs" />
     <Compile Include="Team.cs" />
+    <Compile Include="TeamRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Striket.RelayRace.Domain\Striker.RelayRace.Domain.csproj">

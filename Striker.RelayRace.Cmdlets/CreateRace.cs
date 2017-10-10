@@ -20,13 +20,20 @@ namespace Striker.RelayRace.Cmdlets
         [Parameter(Position = 2, Mandatory = true)]
         public List<string> ChipIds { get; set; }
 
+        [Parameter(Position = 3, Mandatory = true)]
+        public bool UseMongo { get; set; }
+
         protected override void ProcessRecord()
         {
-            const string ConnectionString = Connection.ConnectionString;
             const string DatabaseaName = "relayrace";
 
-            var container = new Container(x => 
-            x.IncludeRegistry(new CmdletRegistry(ConnectionString, DatabaseaName)));
+            var container = new Container(x =>
+                x.IncludeRegistry(
+                    new CmdletRegistry(
+                        Connection.MongoDbConnectionString,
+                        Connection.SqlConnectionString,
+                        DatabaseaName,
+                        this.UseMongo)));
 
             var raceManager = container.GetInstance<RaceManager>();
 

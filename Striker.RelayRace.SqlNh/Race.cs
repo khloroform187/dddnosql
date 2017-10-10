@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Striker.RelayRace.SqlNh
 {
+    [Table("Races")]
     public class Race
     {
-        public string RaceId { get; set; }
+        [Key]
+        public Guid RaceId { get; set; }
 
         public string Name { get; set; }
 
@@ -15,8 +18,8 @@ namespace Striker.RelayRace.SqlNh
 
         public DateTime? End { get; set; }
 
-        public List<Guid> TeamIds { get; set; }
+        public string TeamIds { get; set; }
 
-        public List<string> ChipIds { get; set; }
+        public string ChipIds { get; set; }
     }
 }

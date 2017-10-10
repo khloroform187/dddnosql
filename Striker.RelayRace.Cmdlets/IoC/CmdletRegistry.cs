@@ -45,6 +45,18 @@ namespace Striker.RelayRace.Cmdlets.IoC
                 this.For<IRaceRepository>()
                     .HybridHttpOrThreadLocalScoped()
                     .Use<SqlNh.RaceRepository>();
+
+                this.For<ITeamRepository>()
+                    .HybridHttpOrThreadLocalScoped()
+                    .Use<SqlNh.TeamRepository>();
+
+                this.For<IActiveTeamRepository>()
+                    .HybridHttpOrThreadLocalScoped()
+                    .Use<SqlNh.ActiveTeamRepository>();
+
+                this.For<ILapStatisticRepository>()
+                    .HybridHttpOrThreadLocalScoped()
+                    .Use<SqlNh.LapStatisticRepository>();
             }
            
         }
