@@ -31,7 +31,7 @@ namespace Striker.RelayRace.Cmdlets
         protected override void ProcessRecord()
         {
             const string DatabaseaName = "relayrace";
-            StatsPrinter.IsMongoDb = this.UseMongo;
+            StatsPrinter.Configure(this.UseMongo);
 
             var container = new Container(x =>
                 x.IncludeRegistry(
@@ -43,11 +43,19 @@ namespace Striker.RelayRace.Cmdlets
 
             var statisticsManager = container.GetInstance<StatisticManager>();
 
+
+            for (int i = 0; i < 200; i++)
+            {
                 var stopWatch = new Stopwatch();
                 stopWatch.Start();
                 statisticsManager.GetRaceStatistics(this.RaceId);
                 stopWatch.Stop();
-                StatsPrinter.Print("GetRaceStatistics", stopWatch.ElapsedMilliseconds);
+                //StatsPrinter.Print("GetRaceStatistics", stopWatch.ElapsedMilliseconds);
+                StatsPrinter.AddGetRaceStatistics(stopWatch.ElapsedMilliseconds);
+            }
+            StatsPrinter.DisplaySummary();
+
+
 
             container.Dispose();
             container.EjectAllInstancesOf<IMongoClient>();

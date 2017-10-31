@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using Striker.RelayRace.Domain.Repositories;
 
@@ -16,7 +18,11 @@ namespace Striker.RelayRace.SqlNh
 
         public Domain.Team Get(Guid id)
         {
-            throw new NotImplementedException();
+            var entityTeam = this._dbContext.Teams.Include(y => y.Laps).Single(x => x.TeamId == id);
+
+            var result = Convert(entityTeam);
+
+            return result;
         }
 
         public void Create(Domain.Team team)
@@ -60,6 +66,30 @@ namespace Striker.RelayRace.SqlNh
         {
             this._dbContext.Database.ExecuteSqlCommand("TRUNCATE TABLE [Laps]");
             this._dbContext.Database.ExecuteSqlCommand("TRUNCATE TABLE [Teams]");
+        }
+
+        private static Domain.Team Convert(Team team)
+        {
+            var domainTeam = new Domain.Team(team.Name, team.RaceId, team.ChipId);
+
+            domainTeam.SetPropertyValue(
+                "Id",
+                team.TeamId);
+            domainTeam.SetPropertyValue(
+                "Laps",
+                new ReadOnlyCollection<Domain.Lap>(team.Laps?.Select(Convert).ToList() ?? new List<Domain.Lap>()));
+
+            return domainTeam;
+        }
+
+        private static Domain.Lap Convert(Lap lap)
+        {
+            var result = new Domain.Lap(lap.Start);
+
+            result.SetPropertyValue("Id", lap.LapId);
+            result.SetPropertyValue("End", lap.End);
+
+            return result;
         }
 
         private static Team Convert(Domain.Team team)

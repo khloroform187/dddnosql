@@ -40,7 +40,7 @@ namespace Striker.RelayRace.Cmdlets
         protected override void ProcessRecord()
         {
             const string DatabaseaName = "relayrace";
-            StatsPrinter.IsMongoDb = this.UseMongo;
+            StatsPrinter.Configure(this.UseMongo);
 
             var container = new Container(x =>
                 x.IncludeRegistry(

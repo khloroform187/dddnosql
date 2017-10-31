@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Striker.RelayRace.Domain;
 using Striker.RelayRace.Domain.DomainEvents;
@@ -24,9 +25,11 @@ namespace Striker.RelayRace.Service.EventHandlers
 
         public void HandleEvent(RaceStarted raceStarted)
         {
+            var xxx = Stopwatch.StartNew();
             var race = this._raceRepository.Get(raceStarted.RaceId);
 
             this.FireTeamRaceStartedEvents(race, raceStarted.Date);
+            StatsPrinter.Print("RaceStarted", xxx.ElapsedMilliseconds);
         }
 
         private void FireTeamRaceStartedEvents(Race race, DateTime raceStarted)

@@ -100,6 +100,38 @@ CREATE TABLE [dbo].[Teams](
 GO
 
 
+6- Create table Laps:
+
+USE [RelayRace]
+GO
+
+/****** Object:  Table [dbo].[Laps]    Script Date: 2017-10-30 12:45:02 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Laps](
+	[LapId] [uniqueidentifier] NOT NULL,
+	[Start] [date] NOT NULL,
+	[End] [date] NULL,
+	[TeamId] [uniqueidentifier] NOT NULL
+) ON [PRIMARY]
+
+GO
 
 
 
+
+
+*** MongDB Indexes ***
+
+db.lapStatistics.createIndex({RaceId: 1})
+db.lapStatistics.reIndex()
+
+db.races.createIndex({RaceId: 1})
+db.races.reIndex()
+
+db.teams.createIndex({TeamId: 1})
+db.teams.reIndex()

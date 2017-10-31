@@ -14,8 +14,10 @@ namespace Striker.RelayRace.Daemon
     {
         static void Main(string[] args)
         {
-            const bool UseMongo = false;
+            const bool UseMongo = true;
             const string DatabaseaName = "relayrace";
+
+            StatsPrinter.Configure(UseMongo);
 
             var container = new Container(x =>
                 x.IncludeRegistry(
@@ -38,7 +40,7 @@ namespace Striker.RelayRace.Daemon
                     {
                         eventDispatcher.DispatchEvents(new List<DomainEvent> { result });
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         var sender = new DomainEventSender();
                         sender.Send(result);

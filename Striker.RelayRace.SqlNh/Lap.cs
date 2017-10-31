@@ -13,5 +13,7 @@ namespace Striker.RelayRace.SqlNh
         public DateTime Start { get; set; }
 
         public DateTime? End { get; set; }
+
+        public Guid TeamId { get; set; }
     }
 }

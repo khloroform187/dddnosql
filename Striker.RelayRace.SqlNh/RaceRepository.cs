@@ -91,7 +91,6 @@ namespace Striker.RelayRace.SqlNh
         {
             var result = new Domain.Race(race.Name, race.LapDistanceInMeters, race.ChipIds.Split(';').ToList());
 
-
             if (!string.IsNullOrWhiteSpace(race.TeamIds))
             {
                 var split = race.TeamIds.Split(';');

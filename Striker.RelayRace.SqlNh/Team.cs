@@ -17,6 +17,6 @@ namespace Striker.RelayRace.SqlNh
 
         public string ChipId { get; set; }
 
-        public ICollection<Lap> Laps { get; set; }
+        public virtual ICollection<Lap> Laps { get; set; }
     }
 }

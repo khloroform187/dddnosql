@@ -1,4 +1,5 @@
-﻿using Striker.RelayRace.Domain.DomainEvents;
+﻿using System.Diagnostics;
+using Striker.RelayRace.Domain.DomainEvents;
 using Striker.RelayRace.Domain.Repositories;
 
 namespace Striker.RelayRace.Service.EventHandlers
@@ -19,11 +20,14 @@ namespace Striker.RelayRace.Service.EventHandlers
 
         public void HandleEvent(TeamRaceFinished teamRaceFinished)
         {
+            var xxx = Stopwatch.StartNew();
             var team = this._teamRepository.Get(teamRaceFinished.TeamId);
             team.FinishRace();
 
             var activeTeam = this._activeTeamRepository.Find(team.Id);
             this._activeTeamRepository.Remove(activeTeam);
+
+            StatsPrinter.Print("TeamRaceFinished", xxx.ElapsedMilliseconds);
         }
     }
 }

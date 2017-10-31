@@ -37,9 +37,9 @@ namespace Striker.RelayRace.Cmdlets
 
             var raceManager = container.GetInstance<RaceManager>();
 
-            var raceId = raceManager.CreateRace(this.Name,  this.LapDistanceInMeters, this.ChipIds);
+            var race = raceManager.CreateRace(this.Name,  this.LapDistanceInMeters, this.ChipIds);
 
-            Console.WriteLine($"Race Id: {raceId}");
+            Console.WriteLine($"Race Id: {race.Id}");
         }
     }
 }
